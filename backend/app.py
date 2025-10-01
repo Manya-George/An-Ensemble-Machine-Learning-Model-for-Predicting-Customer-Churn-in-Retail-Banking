@@ -10,6 +10,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 from dotenv import load_dotenv
+import psycopg2
 
 load_dotenv()
 print(f"Email configured: {os.getenv('EMAIL_ADDRESS')}")
@@ -19,13 +20,14 @@ app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-change-this')
 CORS(app, supports_credentials=True)
 
-# Database configuration
-DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',  # Change to your MySQL username
-    'password': '',  # Change to your MySQL password
-    'database': 'ChurnDBTest'
-}
+
+# Database connection
+conn = psycopg2.connect(
+    host=os.getenv("DB_HOST"),
+    database=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASS")
+)
 
 # Email configuration
 EMAIL_CONFIG = {
