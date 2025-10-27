@@ -19,19 +19,19 @@
 
             <div class="menu-label">Navigation</div>
             
-            <a href="IT_admin_dashboard.html" class="menu-item active" data-page="dashboard">
+            <a href="IT_admin_dashboard.html" class="menu-item" data-page="dashboard">
                 <i class="bi bi-speedometer2"></i>
                 Dashboard
             </a>
 
             <div class="menu-label">ML Model</div>
             
-            <a href="#train-model" class="menu-item" data-page="train-model">
+            <a href="upload_data.html" class="menu-item" data-page="upload-data">
                 <i class="bi bi-list-check"></i>
-                Train Model
+                Generate Prediction
             </a>
 
-            <a href="#reports" class="menu-item" data-page="reports">
+            <a href="prediction_results.html" class="menu-item" data-page="prediction-results">
                 <i class="bi bi-file-earmark-bar-graph"></i>
                 Reports
             </a>
@@ -123,23 +123,17 @@
     </div>
 
     <script>
-        // Menu Item Active State Management
+        // Highlight active link based on current page URL
         const menuItems = document.querySelectorAll('.menu-item');
-        
+        const currentPage = window.location.pathname.split('/').pop(); // e.g., 'update_user.html'
+
         menuItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                // Remove active class from all menu items
-                menuItems.forEach(mi => mi.classList.remove('active'));
-                
-                // Add active class to clicked item
-                this.classList.add('active');
-                
-                // Optional: You can add page navigation logic here
-                const page = this.getAttribute('data-page');
-                console.log('Navigating to:', page);
-                // When you create actual pages, replace the href with the actual page URL
-                // For example: window.location.href = page + '.html';
-            });
+            const linkPage = item.getAttribute('href');
+
+            // Match the link's href with the current page filename
+            if (linkPage === currentPage) {
+            item.classList.add('active');
+            }
         });
 
         // User Profile Dropdown Functionality

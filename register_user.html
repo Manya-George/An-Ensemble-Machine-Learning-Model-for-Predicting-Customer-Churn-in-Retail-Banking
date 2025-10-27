@@ -27,19 +27,19 @@
 
             <div class="menu-label">ML Model</div>
             
-            <a href="#train-model" class="menu-item" data-page="train-model">
+            <a href="upload_data.html" class="menu-item" data-page="upload-data">
                 <i class="bi bi-list-check"></i>
-                Train Model
+                Generate Prediction
             </a>
 
-            <a href="#reports" class="menu-item" data-page="reports">
+            <a href="prediction_results.html" class="menu-item" data-page="prediction-results">
                 <i class="bi bi-file-earmark-bar-graph"></i>
                 Reports
             </a>
 
             <div class="menu-label">User Management</div>
             
-            <a href="register_user.html" class="menu-item active" data-page="register-user">
+            <a href="register_user.html" class="menu-item" data-page="register-user">
                 <i class="bi bi-person-add"></i>
                 Register User
             </a>
@@ -202,14 +202,17 @@
     </div>
 
     <script>
-        // Menu Item Active State Management
+        // Highlight active link based on current page URL
         const menuItems = document.querySelectorAll('.menu-item');
-        
+        const currentPage = window.location.pathname.split('/').pop(); // e.g., 'update_user.html'
+
         menuItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                menuItems.forEach(mi => mi.classList.remove('active'));
-                this.classList.add('active');
-            });
+            const linkPage = item.getAttribute('href');
+
+            // Match the link's href with the current page filename
+            if (linkPage === currentPage) {
+            item.classList.add('active');
+            }
         });
 
         // User Profile Dropdown Functionality

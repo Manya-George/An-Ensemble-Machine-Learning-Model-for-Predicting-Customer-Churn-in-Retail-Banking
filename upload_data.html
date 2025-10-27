@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Customer Data</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="dashboard_styles.css">
+    <link rel="stylesheet" href="upload_data.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">LL</div>
+                <span class="logo-text">LoyaltyLens</span>
+            </div>
+
+            <div class="menu-label">Navigation</div>
+            
+            <a href="IT_admin_dashboard.html" class="menu-item" data-page="dashboard">
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </a>
+
+            <div class="menu-label">ML Model</div>
+            
+            <a href="upload_data.html" class="menu-item" data-page="upload-data">
+                <i class="bi bi-list-check"></i>
+                Generate Prediction
+            </a>
+
+            <a href="prediction_results.html" class="menu-item" data-page="prediction-results">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                Reports
+            </a>
+
+            <div class="menu-label">User Management</div>
+            
+            <a href="register_user.html" class="menu-item" data-page="register-user">
+                <i class="bi bi-person-add"></i>
+                Register User
+            </a>
+
+            <a href="update_user.html" class="menu-item" data-page="update-user">
+                <i class="bi bi-person-gear"></i>
+                Update User
+            </a>
+
+            <div class="menu-label">System Maintenance</div>
+            
+            <a href="#system-logs" class="menu-item" data-page="system-logs">
+                <i class="bi bi-file-earmark-text"></i>
+                System Logs
+            </a>
+        </aside>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="search-bar">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search or type command...">
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn">
+                        <i class="bi bi-bell"></i>
+                        <span class="notification-badge"></span>
+                    </button>
+                    
+                    <!-- User Profile with Dropdown -->
+                    <div class="user-profile-container">
+                        <div class="user-profile" id="userProfileBtn">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="user-name">Username</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="#profile" class="dropdown-item">
+                                <i class="bi bi-person"></i>
+                                View Profile
+                            </a>
+                            <a href="#logout" class="dropdown-item" id="logoutBtn">
+                                <i class="bi bi-box-arrow-right"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="upload-container">  
+                <h1 class="page-title">Customer Churn Prediction</h1>
+                <p class="page-subtitle">Upload a CSV file with customer data to predict churn likelihood</p>
+
+                <div class="upload-zone">              
+                    <div class="upload-area" id="uploadArea">
+                        <h3>Drag & Drop CSV File Here</h3>
+                        <p style="color: #6b7280; margin-top: 10px;">or click to browse</p>
+                        <input type="file" id="fileInput" accept=".csv" style="display: none;">
+                    </div>
+
+                    <div class="file-info" id="fileInfo">
+                        <strong>Selected File:</strong> <span id="fileName"></span><br>
+                        <strong>Size:</strong> <span id="fileSize"></span>
+                    </div>
+                
+                    <div class="status-message" id="statusMessage"></div>
+                
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar-wrapper">
+                            <div class="progress-bar" id="progressBar">0%</div>
+                        </div>
+                        <div class="progress-text" id="progressText">Preparing upload...</div>
+                    </div>
+                
+                    <button class="upload-btn" id="uploadBtn" disabled>
+                        <span id="btnText">Upload & Predict</span>
+                    </button>
+                </div>
+                
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const statusMessage = document.getElementById('statusMessage');
+        let selectedFile = null;
+
+        // Highlight active link based on current page URL
+        const menuItems = document.querySelectorAll('.menu-item');
+        const currentPage = window.location.pathname.split('/').pop(); // e.g., 'update_user.html'
+
+        menuItems.forEach(item => {
+            const linkPage = item.getAttribute('href');
+
+            // Match the link's href with the current page filename
+            if (linkPage === currentPage) {
+            item.classList.add('active');
+            }
+        });
+
+        // Click to upload
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        // File selection
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].name.endsWith('.csv')) {
+                fileInput.files = files;
+                handleFileSelect({ target: { files: files } });
+            }
+        });
+        
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            if (!file.name.endsWith('.csv')) {
+                showStatus('Please select a CSV file', 'error');
+                return;
+            }
+            
+            selectedFile = file;
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.style.display = 'block';
+            uploadBtn.disabled = false;
+            statusMessage.style.display = 'none';
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+        
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status-message ' + type;
+            statusMessage.style.display = 'block';
+        }
+        
+        function updateProgress(percentage, text) {
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+            progressText.textContent = text;
+        }
+        
+        uploadBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+            
+            uploadBtn.disabled = true;
+            progressContainer.style.display = 'block';
+            statusMessage.style.display = 'none';
+            
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            
+            try {
+                updateProgress(10, 'Uploading file...');
+                
+                const response = await fetch(`${API_URL}/predict-churn`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                
+                updateProgress(50, 'Processing data...');
+                
+                if (!response.ok) {
+                    throw new Error('Upload failed');
+                }
+                
+                const result = await response.json();
+                
+                updateProgress(100, 'Prediction complete!');
+                
+                setTimeout(() => {
+                    showStatus('Prediction completed successfully! Redirecting to results...', 'success');
+                    setTimeout(() => {
+                        window.location.href = `prediction_results.html?jobId=${result.job_id}`;
+                    }, 1500);
+                }, 500);
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                showStatus('Failed to process file. Please try again.', 'error');
+                progressContainer.style.display = 'none';
+                uploadBtn.disabled = false;
+            }
+        });
+
+        // User Profile Dropdown Functionality
+        const userProfileBtn = document.getElementById('userProfileBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        
+        // Toggle dropdown on click
+        userProfileBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!userProfileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+        
+        // Logout functionality
+        const logoutBtn = document.getElementById('logoutBtn');
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Add your logout logic here
+            if (confirm('Are you sure you want to logout?')) {
+                console.log('User logged out');
+                // Redirect to login page or perform logout action
+                // window.location.href = 'login.html';
+                alert('Logout functionality - redirect to login page');
+            }
+        });
+    </script>
+</body>
+</html>

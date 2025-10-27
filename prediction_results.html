@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="dashboard_styles.css">
+    <link rel="stylesheet" href="prediction_results.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">LL</div>
+                <span class="logo-text">LoyaltyLens</span>
+            </div>
+
+            <div class="menu-label">Navigation</div>
+            
+            <a href="IT_admin_dashboard.html" class="menu-item" data-page="dashboard">
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </a>
+
+            <div class="menu-label">ML Model</div>
+            
+            <a href="upload_data.html" class="menu-item" data-page="upload-data">
+                <i class="bi bi-list-check"></i>
+                Generate Prediction
+            </a>
+
+            <a href="prediction_results.html" class="menu-item" data-page="prediction-results">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                Reports
+            </a>
+
+            <div class="menu-label">User Management</div>
+            
+            <a href="register_user.html" class="menu-item" data-page="register-user">
+                <i class="bi bi-person-add"></i>
+                Register User
+            </a>
+
+            <a href="update_user.html" class="menu-item" data-page="update-user">
+                <i class="bi bi-person-gear"></i>
+                Update User
+            </a>
+
+            <div class="menu-label">System Maintenance</div>
+            
+            <a href="#system-logs" class="menu-item" data-page="system-logs">
+                <i class="bi bi-file-earmark-text"></i>
+                System Logs
+            </a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="search-bar">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search or type command...">
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn">
+                        <i class="bi bi-bell"></i>
+                        <span class="notification-badge"></span>
+                    </button>
+                    
+                    <div class="user-profile-container">
+                        <div class="user-profile" id="userProfileBtn">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="user-name">Username</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="#profile" class="dropdown-item">
+                                <i class="bi bi-person"></i>
+                                View Profile
+                            </a>
+                            <a href="#logout" class="dropdown-item" id="logoutBtn">
+                                <i class="bi bi-box-arrow-right"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="results-display">
+                <h1 class="page-title">Churn Prediction Results</h1>
+                <p class="page-subtitle">Analysis completed at <span id="timestamp"></span></p>
+
+                <!-- Search by Job ID Section -->
+                <div class="job-search">
+                    <form class="job-search-container">
+                        <div class="job-search-group"style="flex: 1; min-width: 300px;">
+                            <label class="form-label">
+                                Search Previous Predictions<span class="required">*</span>
+                            </label>
+                            <input 
+                                type="number" 
+                                id="jobIdSearch" 
+                                class="form-input"
+                                placeholder="Enter Job ID (e.g., 1, 2, 3...)" 
+                                required>
+                            <span class="form-helper">Enter the jobID of the report you want to retrieve</span>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: flex-end;">
+                            <button class="searchJobBtn">
+                                Search
+                            </button>
+                            <button class="clearSearchBtn">
+                                <i class="bi bi-x-circle"></i> Clear
+                            </button>
+                        </div>
+                    </form>
+                    <div id="searchMessage" style="margin-top: 10px; padding: 10px; border-radius: 6px; display: none;"></div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Customers</h3>
+                        <div class="value" id="totalCustomers">-</div>
+                    </div>
+                    <div class="stat-card danger">
+                        <h3>High Churn Risk</h3>
+                        <div class="value" id="highRisk">-</div>
+                    </div>
+                    <div class="stat-card success">
+                        <h3>Low Churn Risk</h3>
+                        <div class="value" id="lowRisk">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Average Churn Score</h3>
+                        <div class="value" id="avgScore">-</div>
+                    </div>
+                </div>
+
+                <!-- Success Message -->
+                <div style="background: #e8f5e9; border-left: 4px solid #4caf50; padding: 20px; border-radius: 8px; margin: 30px 0;">
+                    <h3 style="color: #2e7d32; margin-bottom: 10px;">
+                        <i class="bi bi-check-circle-fill"></i> Prediction Completed Successfully!
+                    </h3>
+                    <p style="color: #666; margin-bottom: 15px;">
+                        Your churn prediction analysis has been completed. Review the summary above or view detailed results in the table.
+                    </p>
+                    <button id="viewTableBtn" style="background: #4caf50; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 16px;">
+                        <i class="bi bi-table"></i> View Detailed Table
+                    </button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px;">
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                        <i class="bi bi-cloud-download" style="font-size: 32px; color: #2196F3; margin-bottom: 10px;"></i>
+                        <h4 style="margin-bottom: 10px;">Export Results</h4>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Download the prediction results as a CSV file</p>
+                        <button onclick="exportQuickResults()" style="background: #2196F3; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; width: 100%;">
+                            Download CSV
+                        </button>
+                    </div>
+
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                        <i class="bi bi-graph-up" style="font-size: 32px; color: #ff9800; margin-bottom: 10px;"></i>
+                        <h4 style="margin-bottom: 10px;">View Analytics</h4>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Explore detailed analytics and insights</p>
+                        <button id="viewTableBtn2" style="background: #ff9800; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; width: 100%;">
+                            View Details
+                        </button>
+                    </div>
+
+                    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                        <i class="bi bi-arrow-repeat" style="font-size: 32px; color: #4caf50; margin-bottom: 10px;"></i>
+                        <h4 style="margin-bottom: 10px;">New Prediction</h4>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Upload new data for another prediction</p>
+                        <button onclick="window.location.href='upload_data.html'" style="background: #4caf50; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; width: 100%;">
+                            Upload Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        const searchBtn = document.querySelector('.searchJobBtn');
+        const clearBtn = document.querySelector('.clearSearchBtn');
+        const jobIdInput = document.getElementById('jobIdSearch');
+        const searchMessage = document.getElementById('searchMessage');
+
+        // Store the current job data globally
+        let currentJobData = null;
+
+        // Add search button click handler
+        searchBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const jobID = jobIdInput.value.trim();
+            
+            if (!jobID) {
+                showMessage('Please enter a Job ID', 'error');
+                return;
+            }
+            
+            // Validate it's a number
+            if (isNaN(jobID) || jobID <= 0) {
+                showMessage('Please enter a valid Job ID number', 'error');
+                return;
+            }
+            
+            loadResults(jobID);
+        });
+
+        // Add clear button handler
+        clearBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            jobIdInput.value = '';
+            searchMessage.style.display = 'none';
+            currentJobData = null;
+            
+            // Clear displayed results
+            document.getElementById('totalCustomers').textContent = '0';
+            document.getElementById('highRisk').textContent = '0';
+            document.getElementById('lowRisk').textContent = '0';
+            document.getElementById('avgScore').textContent = '0%';
+            document.getElementById('timestamp').textContent = 'N/A';
+        });
+
+        // Helper function to show messages
+        function showMessage(message, type) {
+            searchMessage.textContent = message;
+            searchMessage.style.display = 'block';
+            
+            if (type === 'error') {
+                searchMessage.style.backgroundColor = '#fee2e2';
+                searchMessage.style.color = '#991b1b';
+                searchMessage.style.border = '1px solid #fecaca';
+            } else if (type === 'success') {
+                searchMessage.style.backgroundColor = '#d1fae5';
+                searchMessage.style.color = '#065f46';
+                searchMessage.style.border = '1px solid #6ee7b7';
+            } else {
+                searchMessage.style.backgroundColor = '#F59E0B';
+                searchMessage.style.color = '#FFFFFF';
+                searchMessage.style.border = '1px solid #F8D8A1';
+            }
+        }
+
+        async function loadResults(jobID) {
+            try {
+                showMessage(`Loading results for Job ID: ${jobID}...`, 'info');
+                
+                const response = await fetch(`${API_URL}/prediction-results/${jobID}`, {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('Job not found. Please check the Job ID and try again.');
+                    } else if (response.status === 401) {
+                        throw new Error('Session expired. Please login again.');
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to load results');
+                }
+                
+                // Store the job data including the job ID
+                currentJobData = {
+                    jobId: jobID,
+                    ...data
+                };
+                
+                // Update statistics
+                updateStatistics(data.statistics);
+                document.getElementById('timestamp').textContent = new Date(data.timestamp).toLocaleString();
+                
+                showMessage('Results loaded successfully!', 'success');
+                
+                console.log('Loaded job data:', currentJobData); // Debug log
+                
+            } catch (error) {
+                console.error('Error loading results:', error);
+                showMessage(error.message || 'Failed to load results. Please try again.', 'error');
+                currentJobData = null;
+            }
+        }
+
+        function updateStatistics(stats) {
+            document.getElementById('totalCustomers').textContent = stats.total || 0;
+            document.getElementById('highRisk').textContent = stats.high_risk || 0;
+            document.getElementById('lowRisk').textContent = stats.low_risk || 0;
+            document.getElementById('avgScore').textContent = ((stats.avg_score || 0) * 100).toFixed(1) + '%';
+        }
+
+        async function exportQuickResults() {
+            if (!currentJobData || !currentJobData.jobId) {
+                alert('Please search for a job first');
+                return;
+            }
+            
+            const jobID = currentJobData.jobId;
+            
+            try {
+                showMessage('Exporting results...', 'info');
+                
+                const response = await fetch(`${API_URL}/prediction-results/${jobID}`, {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch results for export');
+                }
+                
+                const data = await response.json();
+                
+                if (!data.success || !data.results) {
+                    throw new Error('No results available to export');
+                }
+                
+                const results = data.results;
+                
+                // Create CSV
+                const csv = [
+                    ['Customer ID', 'Name', 'Churn Probability', 'Risk Level', 'Prediction'].join(','),
+                    ...results.map(r => [
+                        r.customer_id,
+                        r.surname || 'N/A',
+                        (r.churn_probability * 100).toFixed(2) + '%',
+                        r.churn_probability >= 0.7 ? 'High Risk' : r.churn_probability >= 0.4 ? 'Medium Risk' : 'Low Risk',
+                        r.churn_prediction ? 'Yes' : 'No'
+                    ].join(','))
+                ].join('\n');
+                
+                // Download CSV
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `churn_predictions_${jobID}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                showMessage('Results exported successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error exporting:', error);
+                alert('Failed to export results: ' + error.message);
+            }
+        }
+
+        // Navigate to table view - Check if buttons exist before adding listeners
+        const viewTableBtn = document.getElementById('viewTableBtn');
+        const viewTableBtn2 = document.getElementById('viewTableBtn2');
+
+        if (viewTableBtn) {
+            viewTableBtn.addEventListener('click', () => {
+                if (!currentJobData || !currentJobData.jobId) {
+                    alert('Please search for a job first');
+                    return;
+                }
+                console.log('Navigating to table with jobId:', currentJobData.jobId); // Debug log
+                window.location.href = `prediction_table.html?jobId=${currentJobData.jobId}`;
+            });
+        }
+
+        if (viewTableBtn2) {
+            viewTableBtn2.addEventListener('click', () => {
+                if (!currentJobData || !currentJobData.jobId) {
+                    alert('Please search for a job first');
+                    return;
+                }
+                console.log('Navigating to table with jobId:', currentJobData.jobId); // Debug log
+                window.location.href = `prediction_table.html?jobId=${currentJobData.jobId}`;
+            });
+        }
+
+        // Support URL parameters (if you navigate to this page with ?jobId=X)
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlJobId = urlParams.get('jobId');
+        if (urlJobId) {
+            jobIdInput.value = urlJobId;
+            loadResults(urlJobId);
+        }
+
+        // Highlight active menu item
+        const menuItems = document.querySelectorAll('.menu-item');
+        const currPage = window.location.pathname.split('/').pop();
+        menuItems.forEach(item => {
+            const linkPage = item.getAttribute('href');
+            if (linkPage === currPage) {
+                item.classList.add('active');
+            }
+        });
+
+        // User Profile Dropdown
+        const userProfileBtn = document.getElementById('userProfileBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        if (userProfileBtn && dropdownMenu) {
+            userProfileBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!userProfileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.classList.remove('show');
+                }
+            });
+        }
+
+        // Logout
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Are you sure you want to logout?')) {
+                    // Call logout API
+                    fetch(`${API_URL}/logout`, {
+                        method: 'POST',
+                        credentials: 'include'
+                    }).then(() => {
+                        window.location.href = 'login.html';
+                    }).catch(() => {
+                        window.location.href = 'login.html';
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>
