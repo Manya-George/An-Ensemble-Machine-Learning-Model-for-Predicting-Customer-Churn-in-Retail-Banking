@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/otp_styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>OTP VERIFICATION</h1>
+        
+        <p id="emailInfo" class="email-info">An OTP has been sent to your email address</p>
+        
+        <p class="instruction">Kindly enter the otp below:</p>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        <div id="successMessage" class="success-message" style="display: none;"></div>
+        
+        <div class="otp-container">
+            <input type="text" class="otp-input" maxlength="1">
+            <input type="text" class="otp-input" maxlength="1">
+            <input type="text" class="otp-input" maxlength="1">
+            <input type="text" class="otp-input" maxlength="1">
+            <input type="text" class="otp-input" maxlength="1">
+            <input type="text" class="otp-input" maxlength="1">
+        </div>
+        
+        <div class="footer-info">
+            <p class="timer" id="timer">The OTP will remain valid for 1:00</p>
+            <a href="#" class="resend-link" id="resendLink">Resend OTP</a>
+        </div>
+        
+        <button class="verify-btn" id="verifyBtn">
+            <span id="btnText">Verify OTP</span>
+            <span id="btnLoader" style="display: none;">Verifying...</span>
+        </button>
+    </div>
+    <script src="js/user_verification.js"></script>
+</body>
+</html>

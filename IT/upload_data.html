@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Customer Data</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/dashboard_styles.css">
+    <link rel="stylesheet" href="../css/upload_data.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">LL</div>
+                <span class="logo-text">LoyaltyLens</span>
+            </div>
+
+            <div class="menu-label">Navigation</div>
+            
+            <a href="dashboard.html" class="menu-item" data-page="dashboard">
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </a>
+
+            <div class="menu-label">ML Model</div>
+            
+            <a href="upload_data.html" class="menu-item" data-page="upload-data">
+                <i class="bi bi-list-check"></i>
+                Generate Prediction
+            </a>
+
+            <a href="prediction_results.html" class="menu-item" data-page="prediction-results">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                Reports
+            </a>
+
+            <a href="it_requests.html" class="menu-item" data-page="prediction-results">
+                <i class="bi bi-basket"></i>
+                Prediction Requests
+            </a>
+
+            <div class="menu-label">User Management</div>
+            
+            <a href="register_user.html" class="menu-item" data-page="register-user">
+                <i class="bi bi-person-add"></i>
+                Register User
+            </a>
+
+            <a href="update_user.html" class="menu-item" data-page="update-user">
+                <i class="bi bi-person-gear"></i>
+                Update User
+            </a>
+
+            <div class="menu-label">System Maintenance</div>
+            
+            <a href="system_logs.html" class="menu-item" data-page="system-logs">
+                <i class="bi bi-file-earmark-text"></i>
+                System Logs
+            </a>
+        </aside>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="search-bar">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search or type command...">
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn">
+                        <i class="bi bi-bell"></i>
+                        <span class="notification-badge"></span>
+                    </button>
+                    
+                    <!-- User Profile with Dropdown -->
+                    <div class="user-profile-container">
+                        <div class="user-profile" id="userProfileBtn">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="user-name">Username</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="#profile" class="dropdown-item">
+                                <i class="bi bi-person"></i>
+                                View Profile
+                            </a>
+                            <a href="#logout" class="dropdown-item" id="logoutBtn">
+                                <i class="bi bi-box-arrow-right"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="upload-container">  
+                <h1 class="page-title">Customer Churn Prediction</h1>
+                <p class="page-subtitle">Upload a CSV file with customer data to predict churn likelihood</p>
+
+                <div class="upload-zone">              
+                    <div class="upload-area" id="uploadArea">
+                        <h3>Drag & Drop CSV File Here</h3>
+                        <p style="color: #6b7280; margin-top: 10px;">or click to browse</p>
+                        <input type="file" id="fileInput" accept=".csv" style="display: none;">
+                    </div>
+
+                    <div class="file-info" id="fileInfo">
+                        <strong>Selected File:</strong> <span id="fileName"></span><br>
+                        <strong>Size:</strong> <span id="fileSize"></span>
+                    </div>
+                
+                    <div class="status-message" id="statusMessage"></div>
+                
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar-wrapper">
+                            <div class="progress-bar" id="progressBar">0%</div>
+                        </div>
+                        <div class="progress-text" id="progressText">Preparing upload...</div>
+                    </div>
+                
+                    <button class="upload-btn" id="uploadBtn" disabled>
+                        <span id="btnText">Upload & Predict</span>
+                    </button>
+                </div>
+                
+            </div>
+        </main>
+    </div>
+    <script src="../js/sidebar_navbar.js"></script>
+    <script src="../js/session_handler.js"></script>
+    <script src="../js/IT/upload_data.js"></script>
+</body>
+</html>

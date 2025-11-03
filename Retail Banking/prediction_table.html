@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/dashboard_styles.css">
+    <link rel="stylesheet" href="../css/prediction_results.css">
+    
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">LL</div>
+                <span class="logo-text">LoyaltyLens</span>
+            </div>
+
+            <div class="menu-label">Navigation</div>
+            
+            <a href="dashboard.html" class="menu-item" data-page="dashboard">
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </a>
+
+            <div class="menu-label">ML Model</div>
+            
+            <a href="retail_requests.html" class="menu-item" data-page="prediction-requests">
+                <i class="bi bi-basket"></i>
+                Prediction Requests
+            </a>
+
+            <a href="prediction_results.html" class="menu-item" data-page="prediction-results">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                Reports
+            </a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="search-bar">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search or type command...">
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn">
+                        <i class="bi bi-bell"></i>
+                        <span class="notification-badge"></span>
+                    </button>
+                    
+                    <!-- User Profile with Dropdown -->
+                    <div class="user-profile-container">
+                        <div class="user-profile" id="userProfileBtn">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="user-name">Username</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="#profile" class="dropdown-item">
+                                <i class="bi bi-person"></i>
+                                View Profile
+                            </a>
+                            <a href="#logout" class="dropdown-item" id="logoutBtn">
+                                <i class="bi bi-box-arrow-right"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="results-display">
+                <h1 class="page-title">Churn Prediction Results Table</h1>
+                <p class="page-subtitle">The table below shows the results of the prediction job requested</p>
+                
+                <div class="filters">
+                    <div class="filters-row">
+                        <div class="filter-group">
+                            <label>Churn Risk Level</label>
+                            <select id="riskFilter">
+                                <option value="all">All Levels</option>
+                                <option value="high">High Risk</option>
+                                <option value="medium">Medium Risk</option>
+                                <option value="low">Low Risk</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Search Customer</label>
+                            <input type="text" id="searchInput" placeholder="Search by ID or name...">
+                        </div>
+                        <div class="filter-group">
+                            <label>Sort By</label>
+                            <select id="sortBy">
+                                <option value="score_desc">Churn Score (High to Low)</option>
+                                <option value="score_asc">Churn Score (Low to High)</option>
+                                <option value="id">Customer ID</option>
+                            </select>
+                        </div>
+                        <div class="filter-group" style="display: flex; gap: 10px; align-items: flex-end;">
+                            <button class="export-btn" onclick="exportResults()">
+                                Export CSV
+                            </button>
+                            <button class="back-btn" onclick="window.location.href = 'prediction_results.html'">
+                                Back to Results
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="results-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Customer ID</th>
+                                <th>Name</th>
+                                <th>Churn Score</th>
+                                <th>Risk Level</th>
+                                <th>Probability</th>
+                                <th>Top Risk Factors</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px;">
+                                    Loading results...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination">
+                    <button id="prevPage" onclick="changePage(-1)">
+                        <i class="bi bi-arrow-left"></i>
+                        Previous
+                    </button>
+                    <span id="pageInfo" style="padding: 10px;">Page 1 of 1</span>
+                    <button id="nextPage" onclick="changePage(1)">
+                        Next
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../js/session_handler.js"></script>
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let allResults = [];
+        let filteredResults = [];
+        let currentPage = 1;
+        const resultsPerPage = 20;
+        
+        // Get job ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobId = urlParams.get('jobId');
+        
+        async function loadResults() {
+            try {
+                const response = await fetch(`${API_URL}/prediction-results/${jobId}`, {
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                allResults = data.results;
+                filteredResults = [...allResults];
+                
+                updateStatistics(data.statistics);
+                document.getElementById('timestamp').textContent = new Date(data.timestamp).toLocaleString();
+                renderResults();
+            } catch (error) {
+                console.error('Error loading results:', error);
+                document.getElementById('resultsBody').innerHTML = `
+                    <tr><td colspan="6" style="text-align: center; color: #f44336;">
+                        Failed to load results. Please try again.
+                    </td></tr>
+                `;
+            }
+        }
+        
+        // Highlight active link based on current page URL
+        const menuItems = document.querySelectorAll('.menu-item');
+        const currPage = window.location.pathname.split('/').pop(); // e.g., 'update_user.html'
+
+        menuItems.forEach(item => {
+            const linkPage = item.getAttribute('href');
+
+            // Match the link's href with the current page filename
+            if (linkPage === currPage) {
+            item.classList.add('active');
+            }
+        });
+
+        function updateStatistics(stats) {
+            document.getElementById('totalCustomers').textContent = stats.total;
+            document.getElementById('highRisk').textContent = stats.high_risk;
+            document.getElementById('lowRisk').textContent = stats.low_risk;
+            document.getElementById('avgScore').textContent = (stats.avg_score * 100).toFixed(1) + '%';
+        }
+        
+        function getRiskLevel(score) {
+            if (score >= 0.7) return { level: 'high', label: 'High Risk' };
+            if (score >= 0.4) return { level: 'medium', label: 'Medium Risk' };
+            return { level: 'low', label: 'Low Risk' };
+        }
+        
+        function getScoreColor(score) {
+            if (score >= 0.7) return '#f44336';
+            if (score >= 0.4) return '#ff9800';
+            return '#4caf50';
+        }
+        
+        function renderResults() {
+            const start = (currentPage - 1) * resultsPerPage;
+            const end = start + resultsPerPage;
+            const pageResults = filteredResults.slice(start, end);
+            
+            const tbody = document.getElementById('resultsBody');
+            
+            if (pageResults.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="6" style="text-align: center; padding: 40px;">
+                        No results found
+                    </td></tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = pageResults.map(result => {
+                const risk = getRiskLevel(result.churn_probability);
+                const scoreColor = getScoreColor(result.churn_probability);
+                
+                return `
+                    <tr>
+                        <td>${result.customer_id}</td>
+                        <td>${result.surname || 'N/A'}</td>
+                        <td>
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: ${result.churn_probability * 100}%; background: ${scoreColor}"></div>
+                            </div>
+                        </td>
+                        <td><span class="churn-badge ${risk.level}">${risk.label}</span></td>
+                        <td>${(result.churn_probability * 100).toFixed(1)}%</td>
+                        <td style="font-size: 12px; color: #666;">${result.top_features ? result.top_features.slice(0, 3).join(', ') : 'N/A'}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            updatePagination();
+        }
+        
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredResults.length / resultsPerPage);
+            document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages;
+        }
+        
+        function changePage(delta) {
+            currentPage += delta;
+            renderResults();
+        }
+        
+        // Filters
+        document.getElementById('riskFilter').addEventListener('change', applyFilters);
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('sortBy').addEventListener('change', applyFilters);
+        
+        function applyFilters() {
+            const riskFilter = document.getElementById('riskFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const sortBy = document.getElementById('sortBy').value;
+            
+            filteredResults = allResults.filter(result => {
+                const matchesRisk = riskFilter === 'all' || getRiskLevel(result.churn_probability).level === riskFilter;
+                const matchesSearch = searchTerm === '' || 
+                    result.customer_id.toString().includes(searchTerm) ||
+                    (result.surname && result.surname.toLowerCase().includes(searchTerm));
+                
+                return matchesRisk && matchesSearch;
+            });
+            
+            // Sorting
+            if (sortBy === 'score_desc') {
+                filteredResults.sort((a, b) => b.churn_probability - a.churn_probability);
+            } else if (sortBy === 'score_asc') {
+                filteredResults.sort((a, b) => a.churn_probability - b.churn_probability);
+            } else if (sortBy === 'id') {
+                filteredResults.sort((a, b) => a.customer_id - b.customer_id);
+            }
+            
+            currentPage = 1;
+            renderResults();
+        }
+        
+        function exportResults() {
+            const csv = [
+                ['Customer ID', 'Name', 'Churn Probability', 'Risk Level', 'Prediction'].join(','),
+                ...filteredResults.map(r => [
+                    r.customer_id,
+                    r.surname || 'N/A',
+                    r.churn_probability,
+                    getRiskLevel(r.churn_probability).label,
+                    r.churn_prediction
+                ].join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `churn_predictions_${jobId}.csv`;
+            a.click();
+        }
+        
+        // Load results on page load
+        if (jobId) {
+            loadResults();
+        } else {
+            document.getElementById('resultsBody').innerHTML = `
+                <tr><td colspan="6" style="text-align: center; color: #f44336;">
+                    No job ID provided
+                </td></tr>
+            `;
+        }
+
+        // User Profile Dropdown Functionality
+        const userProfileBtn = document.getElementById('userProfileBtn');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        
+        // Toggle dropdown on click
+        userProfileBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!userProfileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

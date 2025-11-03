@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Retail Admin Dashboard — LoyaltyLens</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../css/dashboard_styles.css">
+  <link rel="stylesheet" href="../css/retail_dashboard.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">LL</div>
+        <span class="logo-text">LoyaltyLens</span>
+      </div>
+
+      <div class="menu-label">Navigation</div>
+      <a href="dashboard.html" class="menu-item" data-page="dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+
+      <div class="menu-label">ML Model</div>
+      <a href="retail_requests.html" class="menu-item" data-page="prediction-requests"><i class="bi bi-basket"></i> Prediction Requests</a>
+      <a href="prediction_results.html" class="menu-item" data-page="prediction-results"><i class="bi bi-file-earmark-bar-graph"></i> Reports</a>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+      <header class="header">
+        <div class="search-bar">
+          <i class="bi bi-search"></i>
+          <input type="text" placeholder="Search or type command...">
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" id="notificationBell">
+            <i class="bi bi-bell"></i>
+            <span class="notification-badge" id="notificationBadge" style="display:none;"></span>
+          </button>
+
+          <div class="user-profile-container">
+            <div class="user-profile" id="userProfileBtn">
+              <i class="bi bi-person-circle"></i>
+              <span class="user-name">Username</span>
+              <i class="bi bi-chevron-down"></i>
+            </div>
+            <div class="dropdown-menu" id="dropdownMenu">
+              <a href="#profile" class="dropdown-item"> <i class="bi bi-person"></i> View Profile</a>
+              <a href="#logout" class="dropdown-item" id="logoutBtn"> <i class="bi bi-box-arrow-right"></i> Logout</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-body">
+        <div class="dashboard-top">
+          <h1 class="page-title">Prediction Requests</h1>
+          <p class="page-subtitle">Submit requests for churn predictions and track them here</p>
+          <div class="top-actions">
+            <button id="refreshBtn" class="btn btn-secondary">
+              <i class="bi bi-arrow-clockwise"></i> Refresh
+              <span id="refreshSpinner" class="spinner" style="display:none;"></span>
+            </button>
+            <button id="newRequestToggle" class="btn btn-primary">
+              <i class="bi bi-plus-circle"></i> New Request
+            </button>
+          </div>
+        </div>
+
+        <!-- Summary cards -->
+        <div class="stats-grid" id="requestSummary">
+          <div class="stat-card pending">
+            <div class="stat-label">Pending Requests</div>
+            <div class="stat-value" id="pendingCount">-</div>
+          </div>
+          <div class="stat-card resolved">
+            <div class="stat-label">Resolved Requests</div>
+            <div class="stat-value" id="resolvedCount">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Requests</div>
+            <div class="stat-value" id="totalCount">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg Resolution Time</div>
+            <div class="stat-value" id="avgResolution">-</div>
+          </div>
+        </div>
+
+        <!-- New request form (collapsible) -->
+        <div class="request-form-panel" id="newRequestPanel" style="display:none;">
+          <form id="requestForm">
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label class="form-label" for="description">Request Description <span class="required">*</span></label>
+                <textarea id="description" class="form-input" rows="4" placeholder="Describe the dataset or customer segment you want churn predictions for..." required></textarea>
+                <span class="form-helper">Add details to help IT produce an accurate prediction (columns, filters).</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="department">Department</label>
+                <input id="department" class="form-input" value="Retail Banking">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="notifyEmail">Notify Email (optional)</label>
+                <input id="notifyEmail" class="form-input" placeholder="example@company.com">
+                <span class="form-helper">If provided we'll email this address when request is resolved.</span>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" id="cancelRequestBtn" class="btn btn-secondary">Cancel</button>
+              <button type="submit" class="btn btn-primary">Submit Request</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- Requests table -->
+        <div class="results-table">
+          <div class="table-header">
+            <h3>Recent Requests</h3>
+            <div>
+              <select id="statusFilter" class="form-select">
+                <option value="all">All</option>
+                <option value="pending">Pending</option>
+                <option value="resolved">Resolved</option>
+              </select>
+              <input type="text" id="searchRequest" class="form-input" placeholder="Search description or jobID">
+            </div>
+          </div>
+
+          <table id="requestsTable">
+            <thead>
+              <tr>
+                <th>Request ID</th>
+                <th>Description</th>
+                <th>Requester</th>
+                <th>Status</th>
+                <th>Requested At</th>
+                <th>Resolved At</th>
+                <th>Job ID</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+          <div class="table-footer">
+            <span id="requestsCount"></span>
+          </div>
+        </div>
+
+      <!-- Toast area -->
+      <div id="toastContainer" style="position:fixed;right:18px;top:80px;z-index:2000;"></div>
+    </main>
+  </div>
+
+  <script src="../js/sidebar_navbar.js"></script>
+  <script src="../js/session_handler.js"></script>
+  <script src="../js/Retail Banking/dashboard.js"></script>
+</body>
+</html>

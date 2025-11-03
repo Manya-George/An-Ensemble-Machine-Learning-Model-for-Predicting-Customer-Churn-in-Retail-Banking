@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User - IT Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/dashboard_styles.css">
+    <link rel="stylesheet" href="../css/update_user.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">LL</div>
+                <span class="logo-text">LoyaltyLens</span>
+            </div>
+
+            <div class="menu-label">Navigation</div>
+            
+            <a href="dashboard.html" class="menu-item" data-page="dashboard">
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </a>
+
+            <div class="menu-label">ML Model</div>
+            
+            <a href="upload_data.html" class="menu-item" data-page="upload-data">
+                <i class="bi bi-list-check"></i>
+                Generate Prediction
+            </a>
+
+            <a href="prediction_results.html" class="menu-item" data-page="prediction-results">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                Reports
+            </a>
+
+            <a href="it_requests.html" class="menu-item" data-page="prediction-results">
+                <i class="bi bi-basket"></i>
+                Prediction Requests
+            </a>
+
+            <div class="menu-label">User Management</div>
+            
+            <a href="register_user.html" class="menu-item" data-page="register-user">
+                <i class="bi bi-person-add"></i>
+                Register User
+            </a>
+
+            <a href="update_user.html" class="menu-item" data-page="update-user">
+                <i class="bi bi-person-gear"></i>
+                Update User
+            </a>
+
+            <div class="menu-label">System Maintenance</div>
+            
+            <a href="system_logs.html" class="menu-item" data-page="system-logs">
+                <i class="bi bi-file-earmark-text"></i>
+                System Logs
+            </a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="search-bar">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search or type command...">
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn">
+                        <i class="bi bi-bell"></i>
+                        <span class="notification-badge"></span>
+                    </button>
+                    
+                    <!-- User Profile with Dropdown -->
+                    <div class="user-profile-container">
+                        <div class="user-profile" id="userProfileBtn">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="user-name">Username</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </div>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="#profile" class="dropdown-item">
+                                <i class="bi bi-person"></i>
+                                View Profile
+                            </a>
+                            <a href="#logout" class="dropdown-item" id="logoutBtn">
+                                <i class="bi bi-box-arrow-right"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Update User Content -->
+            <div class="form-container">
+                <h1 class="page-title">Update User</h1>
+                <p class="page-subtitle">Search for a user and update their information</p>
+
+                <div class="success-message" id="successMessage">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>User updated successfully!</span>
+                </div>
+
+                <div class="error-message" id="errorMessage">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span id="errorText">User not found. Please check the username and try again.</span>
+                </div>
+
+                <!-- Username Lookup Section -->
+                <div class="lookup-section" id="lookupSection">
+                    <form class="lookup-form" id="lookupForm">
+                        <div class="lookup-group">
+                            <label class="form-label" for="lookupUsername">
+                                Username <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="lookupUsername" 
+                                name="lookupUsername" 
+                                class="form-input" 
+                                placeholder="Enter username to search"
+                                required
+                            >
+                            <span class="form-helper">Enter the username of the user you want to update</span>
+                        </div>
+                        <button type="submit" class="btn-lookup" id="lookupBtn">
+                            Lookup User
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Update Form Section (Initially Hidden) -->
+                <div class="update-section" id="updateSection">
+                    <div class="update-form">
+                        <div class="user-info-header">
+                            <div class="user-info-details">
+                                <div class="user-avatar" id="userAvatar">JD</div>
+                                <div class="user-info-text">
+                                    <h3 id="displayUsername">Loading...</h3>
+                                    <p id="displayEmail">Loading...</p>
+                                </div>
+                            </div>
+                            <button type="button" class="change-user-btn" id="changeUserBtn">
+                                <i class="bi bi-arrow-left"></i>
+                                Change User
+                            </button>
+                        </div>
+
+                        <form id="updateForm">
+                            <div class="form-grid">
+                                <!-- Username (Read-only) -->
+                                <div class="form-group">
+                                    <label class="form-label" for="username">
+                                        Username
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="username" 
+                                        name="username" 
+                                        class="form-input" 
+                                        readonly
+                                        style="background: #f9fafb; color: #6b7280;"
+                                    >
+                                    <span class="form-helper">Username cannot be changed</span>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="form-group">
+                                    <label class="form-label" for="email">
+                                        Email Address <span class="required">*</span>
+                                    </label>
+                                    <input 
+                                        type="email" 
+                                        id="email" 
+                                        name="email" 
+                                        class="form-input" 
+                                        placeholder="user@example.com"
+                                        required
+                                    >
+                                    <span class="error-text" id="emailError">Valid email is required</span>
+                                    <span class="form-helper">Update user's email address</span>
+                                </div>
+
+                                <!-- New Password (Optional) -->
+                                <div class="form-group">
+                                    <label class="form-label" for="password">
+                                        New Password
+                                    </label>
+                                    <div class="password-input-wrapper">
+                                        <input 
+                                            type="password" 
+                                            id="password" 
+                                            name="password" 
+                                            class="form-input" 
+                                            placeholder="Leave blank to keep current"
+                                        >
+                                        <button type="button" class="password-toggle" id="togglePassword">
+                                            <i class="bi bi-eye" id="eyeIcon"></i>
+                                        </button>
+                                    </div>
+                                    <span class="error-text" id="passwordError">Password must be at least 8 characters</span>
+                                    <span class="form-helper">Leave blank to keep current password</span>
+                                </div>
+
+                                <!-- Role -->
+                                <div class="form-group">
+                                    <label class="form-label" for="role">
+                                        User Role <span class="required">*</span>
+                                    </label>
+                                    <select 
+                                        id="role" 
+                                        name="role" 
+                                        class="form-select"
+                                        required
+                                    >
+                                        <option value="">Select a role</option>
+                                        <option value="IT admin">IT ML Admin</option>
+                                        <option value="Retail admin">Retail Banking Admin</option>
+                                        <option value="Business analyst">Business Analyst</option>
+                                    </select>
+                                    <span class="error-text" id="roleError">Please select a role</span>
+                                    <span class="form-helper">Update user's role and permissions</span>
+                                </div>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-tertiary" id="revokeBtn">
+                                    <i class="bi bi-ban"></i>
+                                    Revoke Access
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="cancelBtn">
+                                    <i class="bi bi-x-circle"></i>
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i>
+                                    Update User
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="../js/sidebar_navbar.js"></script>
+    <script src="../js/session_handler.js"></script>
+    <script src="../js/IT/update_user.js"></script>
+</body>
+</html>

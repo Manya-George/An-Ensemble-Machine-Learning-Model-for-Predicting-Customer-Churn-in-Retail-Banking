@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,16 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="login_styles.css">
+    <link rel="stylesheet" href="css/login_styles.css">
 </head>
 <body>
     <div class="left-section">
-        <!-- Replace with your left wave SVG file -->
         <img src="login_background.svg" alt="Decorative waves" class="wave-graphic">
     </div>
 
     <div class="right-section">
-        
         <div class="login-container">
             <h1>LOGIN</h1>
 
@@ -39,59 +36,7 @@
             </form>
         </div>
     </div>
-    <script>
-        const API_URL = 'http://localhost:5000/api';
 
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorMsg = document.getElementById('errorMessage');
-            const loginBtn = document.getElementById('loginBtn');
-            const btnText = document.getElementById('btnText');
-            const btnLoader = document.getElementById('btnLoader');
-            
-            // Hide previous errors
-            errorMsg.style.display = 'none';
-            
-            // Show loader
-            loginBtn.disabled = true;
-            btnText.style.display = 'none';
-            btnLoader.style.display = 'inline';
-            
-            try {
-                const response = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify({ username, password })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    // Store masked email for OTP page
-                    sessionStorage.setItem('masked_email', data.masked_email);
-                    // Redirect to OTP verification page
-                    window.location.href = 'otp_verification.html';
-                } else {
-                    errorMsg.textContent = data.message;
-                    errorMsg.style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                errorMsg.textContent = 'Connection error. Please try again.';
-                errorMsg.style.display = 'block';
-            } finally {
-                // Hide loader
-                loginBtn.disabled = false;
-                btnText.style.display = 'inline';
-                btnLoader.style.display = 'none';
-            }
-        });
-    </script>
+    <script src="js/login.js"></script>
 </body>
 </html>
