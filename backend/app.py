@@ -17,17 +17,17 @@ print(f"Email configured: {os.getenv('EMAIL_ADDRESS')}")
 print(f"Email password exists: {bool(os.getenv('EMAIL_PASSWORD'))}")
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-change-this')
+app.secret_key = os.getenv('SECRET_KEY')
 CORS(app, supports_credentials=True)
 
-
 # Database connection
-conn = psycopg2.connect(
-    host=os.getenv("DB_HOST"),
-    database=os.getenv("DB_NAME"),
-    user=os.getenv("DB_USER"),
-    password=os.getenv("DB_PASS")
-)
+DB_CONFIG = {
+    "host": os.getenv("DB_HOST"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASS"),
+    "database": os.getenv("DB_NAME"),
+    "port": os.getenv("DB_PORT", "3306")
+}
 
 # Email configuration
 EMAIL_CONFIG = {
@@ -64,11 +64,11 @@ def send_otp_email(email, otp_code, username):
                 <h2>OTP Verification</h2>
                 <p>Hello {username},</p>
                 <p>Your One-Time Password (OTP) for login verification is:</p>
-                <h1 style="color: #2196F3; letter-spacing: 5px;">{otp_code}</h1>
+                <h1 style="color: #1E88E5; letter-spacing: 5px;">{otp_code}</h1>
                 <p>This OTP will expire in 1 minute.</p>
                 <p>If you didn't request this code, please ignore this email.</p>
                 <br>
-                <p>Best regards,<br>Banking System Team</p>
+                <p>Best regards,<br>Loyalty Lens Banking System Team</p>
             </body>
         </html>
         """
@@ -91,11 +91,11 @@ def send_otp_email(email, otp_code, username):
         print("Closing connection...")
         server.quit()
         
-        print("✅ Email sent successfully!")
+        print("Email sent successfully!")
         return True
         
     except Exception as e:
-        print(f"❌ Error sending email: {e}")
+        print(f"Error sending email: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -126,10 +126,6 @@ def login():
             conn.close()
             return jsonify({'success': False, 'message': 'Invalid username or password'}), 401
 
-        # ADD THIS DEBUG CODE:
-        print(f"User found: {user['username']}")
-        print(f"Stored hash: {user['password_hash']}")
-        print(f"Password entered: {password}")
         
         # Verify password
         if not bcrypt.checkpw(password.encode('utf-8'), user['password_hash'].encode('utf-8')):
@@ -320,6 +316,37 @@ def check_auth():
             'role': session.get('role')
         }), 200
     return jsonify({'authenticated': False}), 401
+
+@app.route('/api/mark-otp-expired', methods=['POST'])
+def mark_otp_expired():
+    """Mark expired OTP as used"""
+    try:
+        user_id = session.get('temp_user_id')
+        if not user_id:
+            return jsonify({'success': False, 'message': 'Session expired'}), 401
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Mark all expired unused OTPs for this user as used
+        cursor.execute(
+            """UPDATE otps 
+               SET isUsed = TRUE 
+               WHERE userID = %s 
+               AND isUsed = FALSE 
+               AND expiresAt < NOW()""",
+            (user_id,)
+        )
+        conn.commit()
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({'success': True, 'message': 'Expired OTP marked'}), 200
+        
+    except Exception as e:
+        print(f"Mark expired OTP error: {e}")
+        return jsonify({'success': False, 'message': 'Server error'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
