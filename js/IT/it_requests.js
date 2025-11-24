@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="request-card" style="background:white;padding:16px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,0.06);margin-bottom:12px;">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
-              <div style="font-weight:700">Request #${r.requestID} • ${new Date(r.requestedAt).toLocaleString()}</div>
-              <div style="color:#6b7280;margin-top:6px">${r.department} • by ${r.requester_username}</div>
+              <div style="font-size: 14px; font-weight:600; color: #374151; margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">Request #${r.requestID} • ${new Date(r.requestedAt).toLocaleString()}</div>
+              <div style="font-size: 14px; margin-top:6px; color: #6b7280;">${r.department} • by ${r.requester_username}</div>
             </div>
             <div style="display:flex;gap:8px;align-items:center">
               <input type="number" placeholder="jobID" class="job-input" data-requestid="${r.requestID}" style="padding:8px;border-radius:6px;border:1px solid #e5e7eb;width:120px" />

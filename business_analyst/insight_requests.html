@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IT - Pending Requests</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../css/dashboard_styles.css">
+  <link rel="stylesheet" href="../css/retail_requests.css">
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo">
+                <div class="logo-icon">LL</div>
+                <span class="logo-text">LoyaltyLens</span>
+            </div>
+
+            <div class="menu-label">Navigation</div>
+            <a href="dashboard.html" class="menu-item" data-page="dashboard">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+
+            <div class="menu-label">ML Model</div>
+            <a href="upload_data.html" class="menu-item" data-page="upload-data"><i class="bi bi-list-check"></i> Generate Prediction</a>
+            <a href="prediction_results.html" class="menu-item" data-page="prediction-results"><i class="bi bi-file-earmark-bar-graph"></i> Reports</a>
+            <a href="it_requests.html" class="menu-item" data-page="prediction-results"><i class="bi bi-basket"></i>Prediction Requests</a>
+
+            <div class="menu-label">User Management</div>
+            <a href="register_user.html" class="menu-item" data-page="register-user"><i class="bi bi-person-add"></i> Register User</a>
+            <a href="update_user.html" class="menu-item" data-page="update-user"><i class="bi bi-person-gear"></i> Update User</a>
+
+            <div class="menu-label">System Maintenance</div>
+            <a href="system_logs.html" class="menu-item" data-page="system-logs"><i class="bi bi-file-earmark-text"></i> System Logs</a>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+                <div class="search-bar">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search or type command..." />
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" id="refreshBtn" title="Refresh dashboard">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                    <div id="refreshSpinner" class="spinner small" style="display:none;"></div>
+
+                    <button class="icon-btn" title="Notifications">
+                        <i class="bi bi-bell"></i>
+                        <span class="notification-badge" id="notificationBadge" style="display:none"></span>
+                    </button>
+
+                    <div class="user-profile-container">
+                        <div class="user-profile" id="userProfileBtn"><i class="bi bi-person-circle"></i><span class="user-name">IT Admin</span><i class="bi bi-chevron-down"></i></div>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="#profile" class="dropdown-item"><i class="bi bi-person"></i> View Profile</a>
+                            <a href="#logout" class="dropdown-item" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+        <div class="form-container">
+            <h1 class="page-title">Pending Prediction Requests</h1>
+            <p class="page-subtitle">Approve and resolve requests by assigning a job ID once predictions are run.</p>
+
+            <div id="requestsContainer" style="margin-top:16px;"></div>
+        </div>
+        </main>
+    </div>
+
+  <script src="../js/sidebar_navbar.js"></script>
+  <script src="../js/session_handler.js"></script>
+  <script src="../js/IT/it_requests.js"></script>
+</body>
+</html>

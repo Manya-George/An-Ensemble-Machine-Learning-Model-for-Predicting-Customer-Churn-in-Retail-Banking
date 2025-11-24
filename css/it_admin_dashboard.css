@@ -110,7 +110,20 @@
 
 /* buttons */
 .btn { padding:8px 12px; border-radius:8px; border:none; cursor:pointer; display:inline-flex; align-items:center; gap:8px; }
-.btn-primary { background:#1E88E5; color:#fff; }
+.btn-primary { padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-family: 'Nunito Sans', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #1E88E5;
+    color: white; }
+.btn-primary:hover { background: linear-gradient(135deg, #e5e7eb 0%, #dbeafe 100%); color: #1E88E5; }
 .btn-secondary { background:#f3f4f6; color:#374151; }
 
 /* refresh spinner */

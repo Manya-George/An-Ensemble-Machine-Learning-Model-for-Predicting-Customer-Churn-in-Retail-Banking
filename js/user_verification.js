@@ -125,9 +125,9 @@ document.getElementById('verifyBtn').addEventListener('click', async () => {
                 if (data.role === 'IT admin') {
                     window.location.href = 'IT/dashboard.html';
                 } else if (data.role === 'Retail admin') {
-                    window.location.href = 'Retail Banking/dashboard.html';
+                    window.location.href = 'retail_banking/dashboard.html';
                 } else {
-                    window.location.href = 'business_analyst_dashboard.html';
+                    window.location.href = 'business_analyst/dashboard.html';
                 }
             }, 1500);
         } else {

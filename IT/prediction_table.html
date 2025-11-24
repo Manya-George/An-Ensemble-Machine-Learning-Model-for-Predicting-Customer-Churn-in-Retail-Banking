@@ -177,23 +177,43 @@
         let filteredResults = [];
         let currentPage = 1;
         const resultsPerPage = 20;
-        
-        // Get job ID from URL
+
         const urlParams = new URLSearchParams(window.location.search);
         const jobId = urlParams.get('jobId');
-        
+
         async function loadResults() {
             try {
                 const response = await fetch(`${API_URL}/prediction-results/${jobId}`, {
                     credentials: 'include'
                 });
-                
                 const data = await response.json();
-                allResults = data.results;
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to fetch results');
+                }
+                allResults = data.results || [];
+                // ensure each result has top_risk_factors as array
+                allResults = allResults.map(r => {
+                    r.top_risk_factors = Array.isArray(r.top_risk_factors) ? r.top_risk_factors : [];
+                    return r;
+                });
+
                 filteredResults = [...allResults];
-                
-                updateStatistics(data.statistics);
-                document.getElementById('timestamp').textContent = new Date(data.timestamp).toLocaleString();
+
+                // if there are duplicates still (rare), group by customer_id and keep highest probability
+                const grouped = {};
+                filteredResults.forEach(r => {
+                    const cid = r.customer_id;
+                    if (!grouped[cid] || r.churn_probability > grouped[cid].churn_probability) {
+                        grouped[cid] = r;
+                    }
+                });
+                filteredResults = Object.values(grouped);
+
+                updateStatistics(data.statistics || {});
+                if (data.timestamp) {
+                    const tsEl = document.getElementById('timestamp');
+                    if (tsEl) tsEl.textContent = new Date(data.timestamp).toLocaleString();
+                }
                 renderResults();
             } catch (error) {
                 console.error('Error loading results:', error);
@@ -204,46 +224,37 @@
                 `;
             }
         }
-        
-        // Highlight active link based on current page URL
-        const menuItems = document.querySelectorAll('.menu-item');
-        const currPage = window.location.pathname.split('/').pop(); // e.g., 'update_user.html'
-
-        menuItems.forEach(item => {
-            const linkPage = item.getAttribute('href');
-
-            // Match the link's href with the current page filename
-            if (linkPage === currPage) {
-            item.classList.add('active');
-            }
-        });
 
         function updateStatistics(stats) {
-            document.getElementById('totalCustomers').textContent = stats.total;
-            document.getElementById('highRisk').textContent = stats.high_risk;
-            document.getElementById('lowRisk').textContent = stats.low_risk;
-            document.getElementById('avgScore').textContent = (stats.avg_score * 100).toFixed(1) + '%';
+            // optional: guard if elements missing
+            const totalEl = document.getElementById('totalCustomers');
+            const highEl = document.getElementById('highRisk');
+            const lowEl = document.getElementById('lowRisk');
+            const avgEl = document.getElementById('avgScore');
+            if (totalEl) totalEl.textContent = stats.total || filteredResults.length || 0;
+            if (highEl) highEl.textContent = stats.high_risk || 0;
+            if (lowEl) lowEl.textContent = stats.low_risk || 0;
+            if (avgEl) avgEl.textContent = ((stats.avg_score || 0) * 100).toFixed(1) + '%';
         }
-        
+
         function getRiskLevel(score) {
             if (score >= 0.7) return { level: 'high', label: 'High Risk' };
             if (score >= 0.4) return { level: 'medium', label: 'Medium Risk' };
             return { level: 'low', label: 'Low Risk' };
         }
-        
+
         function getScoreColor(score) {
             if (score >= 0.7) return '#f44336';
             if (score >= 0.4) return '#ff9800';
             return '#4caf50';
         }
-        
+
         function renderResults() {
             const start = (currentPage - 1) * resultsPerPage;
             const end = start + resultsPerPage;
             const pageResults = filteredResults.slice(start, end);
-            
             const tbody = document.getElementById('resultsBody');
-            
+
             if (pageResults.length === 0) {
                 tbody.innerHTML = `
                     <tr><td colspan="6" style="text-align: center; padding: 40px;">
@@ -252,15 +263,18 @@
                 `;
                 return;
             }
-            
+
             tbody.innerHTML = pageResults.map(result => {
                 const risk = getRiskLevel(result.churn_probability);
                 const scoreColor = getScoreColor(result.churn_probability);
-                
+                const topFactors = (result.top_risk_factors && Array.isArray(result.top_risk_factors))
+                    ? result.top_risk_factors.map(f => f.factor).filter(Boolean).slice(0,3).join(', ')
+                    : 'N/A';
+
                 return `
                     <tr>
-                        <td>${result.customer_id}</td>
-                        <td>${result.surname || 'N/A'}</td>
+                        <td>${escapeHtml(result.customer_id)}</td>
+                        <td>${escapeHtml(result.surname || 'N/A')}</td>
                         <td>
                             <div class="score-bar">
                                 <div class="score-fill" style="width: ${result.churn_probability * 100}%; background: ${scoreColor}"></div>
@@ -268,58 +282,63 @@
                         </td>
                         <td><span class="churn-badge ${risk.level}">${risk.label}</span></td>
                         <td>${(result.churn_probability * 100).toFixed(1)}%</td>
-                        <td style="font-size: 12px; color: #666;">${result.top_features ? result.top_features.slice(0, 3).join(', ') : 'N/A'}</td>
+                        <td style="font-size: 12px; color: #666;">${escapeHtml(topFactors)}</td>
                     </tr>
                 `;
             }).join('');
-            
             updatePagination();
         }
-        
+
+        function escapeHtml(s) {
+            if (s === undefined || s === null) return '';
+            return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+        }
+
         function updatePagination() {
-            const totalPages = Math.ceil(filteredResults.length / resultsPerPage);
+            const totalPages = Math.max(1, Math.ceil(filteredResults.length / resultsPerPage));
             document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
             document.getElementById('prevPage').disabled = currentPage === 1;
             document.getElementById('nextPage').disabled = currentPage === totalPages;
         }
-        
+
         function changePage(delta) {
-            currentPage += delta;
+            currentPage = Math.max(1, currentPage + delta);
             renderResults();
         }
-        
-        // Filters
-        document.getElementById('riskFilter').addEventListener('change', applyFilters);
-        document.getElementById('searchInput').addEventListener('input', applyFilters);
-        document.getElementById('sortBy').addEventListener('change', applyFilters);
-        
+
+        // filters (ensure elements exist)
+        const rf = document.getElementById('riskFilter');
+        if (rf) rf.addEventListener('change', applyFilters);
+        const si = document.getElementById('searchInput');
+        if (si) si.addEventListener('input', applyFilters);
+        const sb = document.getElementById('sortBy');
+        if (sb) sb.addEventListener('change', applyFilters);
+
         function applyFilters() {
-            const riskFilter = document.getElementById('riskFilter').value;
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const sortBy = document.getElementById('sortBy').value;
-            
+            const riskFilter = (document.getElementById('riskFilter')||{}).value || 'all';
+            const searchTerm = ((document.getElementById('searchInput')||{}).value || '').toLowerCase();
+            const sortBy = (document.getElementById('sortBy')||{}).value || 'score_desc';
+
             filteredResults = allResults.filter(result => {
                 const matchesRisk = riskFilter === 'all' || getRiskLevel(result.churn_probability).level === riskFilter;
-                const matchesSearch = searchTerm === '' || 
-                    result.customer_id.toString().includes(searchTerm) ||
+                const matchesSearch = searchTerm === '' ||
+                    (result.customer_id && result.customer_id.toString().toLowerCase().includes(searchTerm)) ||
                     (result.surname && result.surname.toLowerCase().includes(searchTerm));
-                
                 return matchesRisk && matchesSearch;
             });
-            
-            // Sorting
+
             if (sortBy === 'score_desc') {
-                filteredResults.sort((a, b) => b.churn_probability - a.churn_probability);
+                filteredResults.sort((a,b)=>b.churn_probability - a.churn_probability);
             } else if (sortBy === 'score_asc') {
-                filteredResults.sort((a, b) => a.churn_probability - b.churn_probability);
+                filteredResults.sort((a,b)=>a.churn_probability - b.churn_probability);
             } else if (sortBy === 'id') {
-                filteredResults.sort((a, b) => a.customer_id - b.customer_id);
+                filteredResults.sort((a,b)=> (a.customer_id||'').localeCompare(b.customer_id||''));
             }
-            
+
             currentPage = 1;
             renderResults();
         }
-        
+
         function exportResults() {
             const csv = [
                 ['Customer ID', 'Name', 'Churn Probability', 'Risk Level', 'Prediction'].join(','),
@@ -340,7 +359,7 @@
             a.click();
         }
         
-        // Load results on page load
+        // initial load
         if (jobId) {
             loadResults();
         } else {
@@ -350,36 +369,7 @@
                 </td></tr>
             `;
         }
-
-        // User Profile Dropdown Functionality
-        const userProfileBtn = document.getElementById('userProfileBtn');
-        const dropdownMenu = document.getElementById('dropdownMenu');
-        
-        // Toggle dropdown on click
-        userProfileBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('show');
-        });
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!userProfileBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                dropdownMenu.classList.remove('show');
-            }
-        });
-        
-        // Logout functionality
-        const logoutBtn = document.getElementById('logoutBtn');
-        logoutBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Add your logout logic here
-            if (confirm('Are you sure you want to logout?')) {
-                console.log('User logged out');
-                // Redirect to login page or perform logout action
-                // window.location.href = 'login.html';
-                alert('Logout functionality - redirect to login page');
-            }
-        });
     </script>
+
 </body>
 </html>

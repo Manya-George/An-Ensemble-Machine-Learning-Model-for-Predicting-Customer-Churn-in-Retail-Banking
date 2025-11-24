@@ -1,0 +1,142 @@
+{
+    "model_summary": {
+        "title": "Ensemble Model Performance Metrics",
+        "metrics": {
+            "threshold_used": 0.3150000000000001,
+            "accuracy": 0.812,
+            "precision": 0.5293005671077504,
+            "recall": 0.687960687960688,
+            "f1": 0.5982905982905983,
+            "roc_auc": 0.8565267887301786
+        },
+        "interpretation": "Metrics confirm the model achieves excellent AUC (overall discrimination) and meets the target Recall for minimizing lost customers (False Negatives), positioning it for profitable retention campaigns."
+    },
+    "feature_interpretability": [
+        {
+            "feature_name": "NumOfProducts",
+            "feature_type": "Relational",
+            "statistical_significance": "Highly statistically significant (p < 0.001). This feature strongly influences churn behavior.",
+            "mean_shap_value": 1.0220088838502888,
+            "model_influence_narrative": "High influence. This is one of the model's primary decision drivers.",
+            "univariate_p_value": 0.00021858494460549394,
+            "plot_filepath": "analytics_outputs/plots/NumOfProducts_churn_relationship.png"
+        },
+        {
+            "feature_name": "Age",
+            "feature_type": "Demographic",
+            "statistical_significance": "Highly statistically significant (p < 0.001). This feature strongly influences churn behavior.",
+            "mean_shap_value": 0.5835429637015077,
+            "model_influence_narrative": "High influence. This is one of the model's primary decision drivers.",
+            "univariate_p_value": 4.7127272656641046e-179,
+            "plot_filepath": "analytics_outputs/plots/Age_churn_relationship.png"
+        },
+        {
+            "feature_name": "IsActiveMember",
+            "feature_type": "Relational",
+            "statistical_significance": "Highly statistically significant (p < 0.001). This feature strongly influences churn behavior.",
+            "mean_shap_value": 0.5830332404412732,
+            "model_influence_narrative": "High influence. This is one of the model's primary decision drivers.",
+            "univariate_p_value": 2.384770284779395e-56,
+            "plot_filepath": "analytics_outputs/plots/IsActiveMember_churn_relationship.png"
+        },
+        {
+            "feature_name": "HasCrCard",
+            "feature_type": "Relational",
+            "statistical_significance": "Not statistically significant (p > 0.05). This feature is unlikely to be a reliable churn predictor.",
+            "mean_shap_value": 0.19454211946516428,
+            "model_influence_narrative": "High influence. This is one of the model's primary decision drivers.",
+            "univariate_p_value": 0.4775528097988776,
+            "plot_filepath": "analytics_outputs/plots/HasCrCard_churn_relationship.png"
+        },
+        {
+            "feature_name": "EstimatedSalary",
+            "feature_type": "Financial",
+            "statistical_significance": "Not statistically significant (p > 0.05). This feature is unlikely to be a reliable churn predictor.",
+            "mean_shap_value": 0.19088419033974896,
+            "model_influence_narrative": "High influence. This is one of the model's primary decision drivers.",
+            "univariate_p_value": 0.22892461305145798,
+            "plot_filepath": "analytics_outputs/plots/EstimatedSalary_churn_relationship.png"
+        },
+        {
+            "feature_name": "Gender",
+            "feature_type": "Other Categorical",
+            "statistical_significance": "Highly statistically significant (p < 0.001). This feature strongly influences churn behavior.",
+            "mean_shap_value": 0.18086001705169813,
+            "model_influence_narrative": "High influence. This is one of the model's primary decision drivers.",
+            "univariate_p_value": 2.2482100097131755e-26,
+            "plot_filepath": "analytics_outputs/plots/Gender_churn_relationship.png"
+        },
+        {
+            "feature_name": "FE_BalanceToSalaryRatio",
+            "feature_type": "Engineered",
+            "statistical_significance": "Not statistically significant (p > 0.05). This feature is unlikely to be a reliable churn predictor.",
+            "mean_shap_value": 0.17846569898615797,
+            "model_influence_narrative": "High influence. This is one of the model's primary decision drivers.",
+            "univariate_p_value": 0.1856350554846319,
+            "plot_filepath": "analytics_outputs/plots/FE_BalanceToSalaryRatio_churn_relationship.png"
+        },
+        {
+            "feature_name": "Balance",
+            "feature_type": "Financial",
+            "statistical_significance": "Highly statistically significant (p < 0.001). This feature strongly influences churn behavior.",
+            "mean_shap_value": 0.16335852251235272,
+            "model_influence_narrative": "High influence. This is one of the model's primary decision drivers.",
+            "univariate_p_value": 6.318663518527974e-35,
+            "plot_filepath": "analytics_outputs/plots/Balance_churn_relationship.png"
+        },
+        {
+            "feature_name": "CreditScore",
+            "feature_type": "Financial",
+            "statistical_significance": "Statistically significant (p < 0.05). This feature is a reliable predictor of churn.",
+            "mean_shap_value": 0.16032454915992195,
+            "model_influence_narrative": "High influence. This is one of the model's primary decision drivers.",
+            "univariate_p_value": 0.008464728991832864,
+            "plot_filepath": "analytics_outputs/plots/CreditScore_churn_relationship.png"
+        },
+        {
+            "feature_name": "Tenure",
+            "feature_type": "Relational",
+            "statistical_significance": "Not statistically significant (p > 0.05). This feature is unlikely to be a reliable churn predictor.",
+            "mean_shap_value": 0.13007503566488057,
+            "model_influence_narrative": "High influence. This is one of the model's primary decision drivers.",
+            "univariate_p_value": 0.16635698992884443,
+            "plot_filepath": "analytics_outputs/plots/Tenure_churn_relationship.png"
+        },
+        {
+            "feature_name": "Geography",
+            "feature_type": "Geographic",
+            "statistical_significance": "Highly statistically significant (p < 0.001). This feature strongly influences churn behavior.",
+            "mean_shap_value": 0.12501104417863615,
+            "model_influence_narrative": "High influence. This is one of the model's primary decision drivers.",
+            "univariate_p_value": 3.8303176053541544e-66,
+            "plot_filepath": "analytics_outputs/plots/Geography_churn_relationship.png"
+        },
+        {
+            "feature_name": "FE_AgeTenureInteraction",
+            "feature_type": "Engineered",
+            "statistical_significance": "Highly statistically significant (p < 0.001). This feature strongly influences churn behavior.",
+            "mean_shap_value": 0.09000149626132718,
+            "model_influence_narrative": "High influence. This is one of the model's primary decision drivers.",
+            "univariate_p_value": 1.2985584416295219e-20,
+            "plot_filepath": "analytics_outputs/plots/FE_AgeTenureInteraction_churn_relationship.png"
+        },
+        {
+            "feature_name": "FE_ZeroBalance",
+            "feature_type": "Engineered",
+            "statistical_significance": "Highly statistically significant (p < 0.001). This feature strongly influences churn behavior.",
+            "mean_shap_value": 0.08017977219481527,
+            "model_influence_narrative": "High influence. This is one of the model's primary decision drivers.",
+            "univariate_p_value": 2.7705739677828432e-39,
+            "plot_filepath": "analytics_outputs/plots/FE_ZeroBalance_churn_relationship.png"
+        },
+        {
+            "feature_name": "FE_TenureGroup",
+            "feature_type": "Engineered",
+            "statistical_significance": "Not statistically significant (p > 0.05). This feature is unlikely to be a reliable churn predictor.",
+            "mean_shap_value": 0.023401934701885133,
+            "model_influence_narrative": "Moderate influence. This feature plays a strong secondary role in determining risk.",
+            "univariate_p_value": 0.27408248744965014,
+            "plot_filepath": "analytics_outputs/plots/FE_TenureGroup_churn_relationship.png"
+        }
+    ]
+}

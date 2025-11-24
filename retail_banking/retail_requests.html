@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Retail Requests - LoyaltyLens</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../css/dashboard_styles.css">
+  <link rel="stylesheet" href="../css/retail_requests.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+                <div class="logo-icon">LL</div>
+                <span class="logo-text">LoyaltyLens</span>
+            </div>
+
+            <div class="menu-label">Navigation</div>
+            <a href="dashboard.html" class="menu-item" data-page="dashboard">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+
+            <div class="menu-label">ML Model</div>
+            <a href="retail_requests.html" class="menu-item" data-page="prediction-request"><i class="bi bi-basket"></i>Prediction Requests</a>
+            <a href="my_prediction_requests.html" class="menu-item" data-page="my-prediction-request"><i class="bi bi-journal"></i>My Prediction Requests</a>
+            <a href="prediction_results.html" class="menu-item" data-page="prediction-results"><i class="bi bi-file-earmark-bar-graph"></i>Reports</a>
+            <a href="insight_requests.html" class="menu-item" data-page="insight-requests"><i class="bi bi-pencil-square"></i>Insight Requests</a>
+            <a href="my_insight_requests.html" class="menu-item" data-page="my-insight-request"><i class="bi bi-journal"></i>My Insight Requests</a>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+                <div class="search-bar">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search or type command..." />
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" title="Notifications">
+                        <i class="bi bi-bell"></i>
+                        <span class="notification-badge" id="notificationBadge" style="display:none"></span>
+                    </button>
+
+                    <div class="user-profile-container">
+                        <div class="user-profile" id="userProfileBtn"><i class="bi bi-person-circle"></i><span class="user-name">Username</span><i class="bi bi-chevron-down"></i></div>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="#profile" class="dropdown-item"><i class="bi bi-person"></i> View Profile</a>
+                            <a href="#logout" class="dropdown-item" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+      <div class="form-container">
+        <h1 class="page-title">Request Prediction</h1>
+        <p class="page-subtitle">Ask IT to run a churn prediction for your dataset or scenario.</p>
+
+        <div class="success-message" id="successMessage" style="display:none;">
+          <i class="bi bi-check-circle-fill"></i><span id="successText"></span>
+        </div>
+        <div class="error-message" id="errorMessage" style="display:none;">
+          <i class="bi bi-exclamation-circle-fill"></i><span id="errorText"></span>
+        </div>
+
+        <form class="request-form" id="requestForm" >
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="department">
+                Department
+              </label>
+              <input 
+                id="department" 
+                class="form-input" 
+                value="Retail Banking" 
+              >
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="description">
+                Description <span class="required">*</span>
+              </label>
+              <textarea id="description" class="form-input" rows="6" placeholder="Describe the data, urgency, special instructions..."></textarea>
+              <span class="form-helper">Provide necessary context so IT knows what to run.</span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" id="cancelBtn" class="btn btn-secondary">
+              <i class="bi bi-x-circle"></i>
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Submit Request
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/sidebar_navbar.js"></script>
+  <script src="../js/session_handler.js"></script>
+  <script src="../js/retail_banking/retail_request.js"></script>
+</body>
+</html>

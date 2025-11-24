@@ -1,6 +1,5 @@
 .logs-container {
-    padding: 32px;
-    max-width: 800px;
+  padding: 32px;
 }
 
 .page-title {
@@ -8,4 +7,106 @@
     font-weight: 700;
     color: #1f2937;
     margin-bottom: 8px;
+}
+
+.page-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 16px;
+}
+/* Filter Bar */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  margin-bottom: 20px;
+}
+
+.filter-bar input,
+.filter-bar select {
+  padding: 8px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.applyFilter {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-family: 'Nunito Sans', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #1E88E5;
+    color: white;
+}
+
+.applyFilter:hover {
+    background: linear-gradient(135deg, #e5e7eb 0%, #dbeafe 100%);
+    color: #1E88E5;
+}
+
+.clearFilter {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-family: 'Nunito Sans', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.clearFilter:hover {
+    background: linear-gradient(135deg, #fa9f9f 0%, #fb7185 100%);
+    color: white;
+}
+
+/* Logs Table */
+.results-table {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(2, 6, 23, 0.06);
+  overflow: hidden;
+}
+
+#logsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#logsTable th {
+  background: #3399FF;
+  color: white;
+  padding: 12px 14px;
+  text-align: left;
+  font-weight: 700;
+}
+
+#logsTable td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f3f4f6;
+  vertical-align: middle;
+  font-size: 14px;
+  color: #374151;
+}
+
+#logsTable tr:hover {
+  background: #f9fafb;
 }
