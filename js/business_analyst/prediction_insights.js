@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const scoreBarClass = getScoreBarClass(prob);
       const topNames = (r.top_factor_names || []).slice(0, 3).join(', ') || 'N/A';
       const created = r.createdAt ? new Date(r.createdAt).toLocaleString() : '';
-      const riskLabel = (r.risk_level || '').toUpperCase() || 'N/A';
+      const riskLabel = riskClass.label;
 
       return `
         <tr style="cursor: pointer;" 
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </td>
           <td>
-            <span class="badge-risk ${riskClass}">${riskLabel}</span>
+            <span class="badge-risk ${riskClass.level}">${riskClass.label}</span>
           </td>
           <td style="font-weight: 600;">${scorePct}%</td>
           <td style="font-size:13px">${escapeHtml(topNames)}</td>

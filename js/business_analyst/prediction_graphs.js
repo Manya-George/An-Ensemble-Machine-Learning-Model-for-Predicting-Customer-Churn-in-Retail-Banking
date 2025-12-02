@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       // Fetch all data (no pagination, no filters)
       const res = await fetch(
-        `${API_URL}/ba/prediction-insights/${jobId}`,
+        `${API_URL}/ba/prediction-insights/${jobId}?page=1&per_page=999999&risk=all`,
         { credentials: 'include' }
       );
       const data = await res.json();

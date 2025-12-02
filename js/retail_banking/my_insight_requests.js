@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
                             <div style="font-size:14px; font-weight:600; margin-bottom:6px; color:#374151;">
-                                Request #${req.insightID} • ${new Date(req.requestedAt).toLocaleString()}
+                                Request #${req.insightID} for jobID #${req.jobID} • ${new Date(req.requestedAt).toLocaleString()}
                             </div>
 
                             <div style="font-size:14px; margin-top:4px; color:#6b7280;">

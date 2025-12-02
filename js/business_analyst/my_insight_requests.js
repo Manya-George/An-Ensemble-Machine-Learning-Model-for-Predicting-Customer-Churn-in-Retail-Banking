@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
               <div style="font-size: 14px; font-weight:600; margin-bottom: 8px; color:#374151;">
-                Insight Request #${r.insightID} • ${new Date(r.requestedAt).toLocaleString()}
+                Insight Request #${r.insightID} for jobID #${r.jobID} • ${new Date(r.requestedAt).toLocaleString()} 
               </div>
               <div style="font-size: 14px; margin-top:6px; color: #6b7280;">
                 ${escapeHtml(r.requester_username)}
