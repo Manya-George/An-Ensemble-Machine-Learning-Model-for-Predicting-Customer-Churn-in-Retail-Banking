@@ -152,41 +152,43 @@ All critical test cases passed successfully.
 ---
 
 ## Recommended Repository Structure
-AN-ENSEMBLE-MACHINE-LEARNING-MODEL-FOR-PREDICTING-CUSTOMER-CHURN
-│
-├── .github/ # GitHub workflows and configuration
-│
-├── business_analyst/ # Business analyst dashboards and insight views
-├── IT/ # IT administrator dashboards and system monitoring
-├── retail_banking/ # Retail banking admin interfaces
-│
-├── css/ # Global and page-specific stylesheets
-├── js/ # Frontend JavaScript logic
-│
-├── src/ # Backend application and machine learning pipeline
-│ ├── pycache/ # Python cache files
-│ ├── analytics_outputs/ # Model outputs, reports, SHAP visualizations
-│ ├── app_routes/ # Flask route definitions
-│ ├── catboost_info/ # CatBoost training logs and metadata
-│ ├── core/ # Core business logic and utilities
-│ ├── flask_session/ # Server-side session storage
-│ ├── model_artifacts/ # Trained models and serialized objects
-│ ├── uploads/ # Uploaded customer datasets
-│ │
-│ ├── churn_prediction_model.py # Model training and inference logic
-│ ├── prediction_app.py # Flask application entry point
-│ ├── Churn modelling.csv # Sample / training dataset
-│ ├── requirements.txt # Python dependencies
-│ ├── .env.example # Environment variable template
-│ └── .env # Environment variables (ignored in Git)
-│
-├── login.html # Authentication page
-├── user_verification.html # User verification interface
-├── login_background.svg # UI asset
-│
-├── .gitignore
-└── README.md
 
+```
+AN-ENSEMBLE-MACHINE-LEARNING-MODEL-FOR-PREDICTING-CUSTOMER-CHURN
+|
+|-- .github/                     # GitHub workflows and configuration
+|
+|-- business_analyst/            # Business analyst dashboards and insight views
+|-- IT/                          # IT administrator dashboards and system monitoring
+|-- retail_banking/              # Retail banking admin interfaces
+|
+|-- css/                         # Global and page-specific stylesheets
+|-- js/                          # Frontend JavaScript logic
+|
+|-- src/                         # Backend application and machine learning pipeline
+|   |-- __pycache__/             # Python cache files
+|   |-- analytics_outputs/       # Model outputs, reports, SHAP visualizations
+|   |-- app_routes/              # Flask route definitions
+|   |-- catboost_info/           # CatBoost training logs and metadata
+|   |-- core/                    # Core business logic and utilities
+|   |-- flask_session/           # Server-side session storage
+|   |-- model_artifacts/         # Trained models and serialized objects
+|   |-- uploads/                 # Uploaded customer datasets
+|   |
+|   |-- churn_prediction_model.py    # Model training and inference logic
+|   |-- prediction_app.py            # Flask application entry point
+|   |-- Churn modelling.csv          # Sample / training dataset
+|   |-- requirements.txt             # Python dependencies
+|   |-- .env.example                 # Environment variable template
+|   `-- .env                         # Environment variables (ignored in Git)
+|
+|-- login.html                   # Authentication page
+|-- user_verification.html       # User verification interface
+|-- login_background.svg         # UI asset
+|
+|-- .gitignore
+`-- README.md
+```
 
 ---
 
